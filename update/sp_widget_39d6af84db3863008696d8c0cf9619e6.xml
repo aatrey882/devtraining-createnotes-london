@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($scope,$rootScope,spUtil,spModal) {
+	/* widget controller */
+	var c = this;
+
+	$rootScope.$on('selectNote',function(event,data) {
+		c.server.get({
+			action: 'getNote',
+			noteID: $rootScope.noteID
+		}).then(function(r) {
+			c.data.title = r.data.noteObj.title;
+			c.data.note = r.data.noteObj.note;
+			c.data.noteID = r.data.noteObj.sys_id;
+		});
+	});
+	
+	c.updateNote=function(updateType){
+		c.server.get({
+			action:'updateNote',
+			noteID:c.data.noteID,
+			noteBody:c.data.note,
+			noteTitle:c.data.title		
+		}).then(function(response){
+			
+		});
+$rootScope.$emit("updateNote",noteTitle,noteBody);
+			console.log("updateNote: "+ noteTitle);
+spModal.alert("updateNote"+noteTitle);
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>note_list</id>
+        <internal>false</internal>
+        <link/>
+        <name>note_list</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+
+	if(input &&input.noteID){
+		var note=new GlideRecord('x_snc_createnotes_note');
+		if(note.get(input.noteID)){
+
+			if(input.action=="getNote"){
+
+				data.noteObj={};
+				data.label=note.getLabel();
+				$sp.getRecordDisplayValues(data.noteObj,note,'title,note,sys_id');
+				gs.addInfoMessage("hello aashish"+data.label);
+
+
+			}
+
+			else if(input.action=='updateNote'){
+
+				note.title=input.noteTitle;
+				note.note=input.noteBody;
+				note.update();
+
+			}
+
+		}	
+
+
+
+	}
+
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>Aashish.Atrey</sys_created_by>
+        <sys_created_on>2018-09-22 18:11:48</sys_created_on>
+        <sys_id>39d6af84db3863008696d8c0cf9619e6</sys_id>
+        <sys_mod_count>51</sys_mod_count>
+        <sys_name>note_list</sys_name>
+        <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
+        <sys_update_name>sp_widget_39d6af84db3863008696d8c0cf9619e6</sys_update_name>
+        <sys_updated_by>Aashish.Atrey</sys_updated_by>
+        <sys_updated_on>2018-09-23 12:53:46</sys_updated_on>
+        <template><![CDATA[div class="panel panel-default" ng-show="c.data.noteID">
+	  <div class="panel-heading clearfix">
+	    <div class="row">
+	      <div class="col-md-12">
+
+          <input class="form-control"  id="note-title" ng-model="c.data.title" ng-change="c.updateNote('title')" ng-model-options="{debounce: 1000}" />
+	      </div>
+	    </div>
+	  </div>
+	  <div class="panel-body">
+	    <textarea class="form-control" id="note-body" ng-model="c.data.note" ></textarea>
+	  </div>
+	</div>]]></template>
+    </sp_widget>
+</record_update>
